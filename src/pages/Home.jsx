@@ -1,9 +1,29 @@
 import React, {useState} from 'react';
 import '@styles/pages/Home.css'
 
+import * as gateway from "@components/common/Gateway";
+
 export default function Home() {
 
     const [currentTab, setCurrentTab] = useState('featured');
+
+    const [userName, setUserName] = useState('');
+
+    const test = async () => {
+        try {
+            const userId = "66110f55-ea65-4df5-8c4b-a27c992b3e64";
+
+            const response = await gateway.post("/template/api/v1/test/user", userId)
+
+            if (response.status === 200) {
+                setUserName(response.name);
+                alert(response.name);
+            }
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
     return (
         <div className="home-container">
@@ -11,7 +31,8 @@ export default function Home() {
                 <div className="hero-content">
                     <h1>Welcome to MyApp</h1>
                     <p>A simple, clean and modern React template for your next project</p>
-                    <button className="btn btn-primary">Get Started</button>
+                    <button className="btn btn-primary" onClick={test}>Get Started</button>
+                    {userName && userName}
                 </div>
             </section>
 
