@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:8080";
+const baseUrl = process.env.REACT_APP_API_GATEWAY;
 
 export const get = async (path, opts) => {
     let result = {};
@@ -9,7 +9,7 @@ export const get = async (path, opts) => {
         params: opts,
     }).then((response) => {
         if (response.status === 200) {
-            result = response.data;
+            result = response;
             result.status = response.status;
         }
     }).catch((error) => {
@@ -26,7 +26,7 @@ export const post = async (path, payload) => {
 
     }).then((response) => {
         if (response.status === 200) {
-            result.data = response.data;
+            result.data = response;
             result.status = response.status;
         }
     }).catch((error) => {
