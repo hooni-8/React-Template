@@ -8,11 +8,12 @@ export default function Home() {
     const [currentTab, setCurrentTab] = useState('featured');
 
     const [userName, setUserName] = useState('');
+    const [userId, setUserId] = useState('');
 
     const test = async () => {
         try {
             const payload = {
-                userId: "66110f55-ea65-4df5-8c4b-a27c992b3e64"
+                userId
             };
 
             const response = await gateway.post("/template/api/v1/test/user", payload);
@@ -32,11 +33,13 @@ export default function Home() {
                 <div className="hero-content">
                     <h1>Welcome to MyApp</h1>
                     <p>A simple, clean and modern React template for your next project</p>
+                    <input type="text" onChange={(e) => setUserId(e.target.value)}/>
+                    <br/><br/><br/>
                     <button className="btn btn-primary" onClick={test}>Get Started</button>
                     <br/><br/><br/>
                     <button className="btn btn-primary" onClick={() => setUserName('')}>Get Reset</button>
                     <br/><br/><br/>
-                    {userName && userName}
+                    {userName}
                 </div>
             </section>
 
