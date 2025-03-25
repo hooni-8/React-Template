@@ -1,27 +1,38 @@
 import React, {useState} from "react";
-import { useNavigate } from 'react-router-dom';
+import * as gateway from "@components/common/Gateway";
+
 import "@styles/pages/auth/login.css"
 
 export default function Login() {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-        rememberMe: false
-    });
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value
-        });
-    };
+    const [userId, setUserId] = useState('');
+    const [password, setPassword] = useState('');
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // 로그인 로직 구현
-        console.log('Login form submitted:', formData);
-    };
+    const login = async () => {
+        if (userId.trim() === '' || password.trim() === '') {
+            alert('아이디와 비밀번호를 입력해주세요.');
+            return;
+        }
+
+        const payload = {
+            userId, password
+        }
+
+        try {
+            const response = await gateway.post("/auth/login", payload);
+
+            if (response.status === 200) {
+                if (response.data.data.code === '0000') {
+                    localStorage.setItem('authToken', response.data.data.token);
+                    window.location.href = "/";
+                } else {
+                    alert("아이디와 비밀번호를 확인해주세요.");
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
     return (
         <div className="page-container">
@@ -32,15 +43,14 @@ export default function Login() {
                         <p>Sign in to your account to continue</p>
                     </div>
 
-                    <div className="login-form" onSubmit={handleSubmit}>
+                    <div className="login-form">
                         <div className="form-group">
                             <label htmlFor="email">Email Address</label>
                             <input
                                 type="email"
                                 id="email"
                                 name="email"
-                                value={formData.email}
-                                onChange={handleChange}
+                                onChange={(e) => setUserId(e.target.value)}
                                 placeholder="Enter your email"
                                 required
                             />
@@ -52,8 +62,7 @@ export default function Login() {
                                 type="password"
                                 id="password"
                                 name="password"
-                                value={formData.password}
-                                onChange={handleChange}
+                                onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Enter your password"
                                 required
                             />
@@ -65,15 +74,17 @@ export default function Login() {
                                     type="checkbox"
                                     id="rememberMe"
                                     name="rememberMe"
-                                    checked={formData.rememberMe}
-                                    onChange={handleChange}
                                 />
                                 <label htmlFor="rememberMe">Remember me</label>
                             </div>
                             <a href="#" className="forgot-password">Forgot Password?</a>
                         </div>
 
-                        <button type="submit" className="btn btn-login-submit">Sign In</button>
+                        <button
+                            type="button"
+                            className="btn btn-login-submit"
+                            onClick={login}
+                        >Sign In</button>
                     </div>
 
                     <div className="login-footer">

@@ -2,6 +2,8 @@ import axios from "axios";
 
 const baseUrl = process.env.REACT_APP_API_GATEWAY;
 
+const token = localStorage.getItem('authToken');
+
 export const get = async (path, opts) => {
     let result = {};
 
@@ -33,5 +35,19 @@ export const post = async (path, payload) => {
         result = error.response;
         console.log(error);
     })
+    return result;
+}
+
+export const session = async () => {
+    let result = {userName: ''};
+
+    await axios.post(baseUrl + "/auth/session", {token})
+        .then((response) => {
+            const data = response.data;
+            result = {userName: data}
+        })
+        .catch((error) => {
+            console.log(error)
+        })
     return result;
 }

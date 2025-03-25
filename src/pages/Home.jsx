@@ -8,17 +8,39 @@ export default function Home() {
     const [currentTab, setCurrentTab] = useState('featured');
 
     const [userName, setUserName] = useState('');
-    const [userId, setUserId] = useState('');
+
+    const [temp, setTemp] = useState('');
+
+    const token = localStorage.getItem('authToken');
 
     const test = async () => {
         try {
             const payload = {
-                userId
+                token
+            };
+
+            const response = await gateway.post("/auth/session", payload);
+
+            if (response.status === 200) {
+                console.log(response.data.data);
+                setUserName(response.data.data);
+            }
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    const test2 = async () => {
+        try {
+            const payload = {
+                userId: temp
             };
 
             const response = await gateway.post("/template/api/v1/test/user", payload);
 
             if (response.status === 200) {
+                console.log(response.data.data);
                 setUserName(response.data);
             }
 
@@ -33,13 +55,13 @@ export default function Home() {
                 <div className="hero-content">
                     <h1>Welcome to MyApp</h1>
                     <p>A simple, clean and modern React template for your next project</p>
-                    <input type="text" onChange={(e) => setUserId(e.target.value)}/>
+                    <button className="btn btn-primary">Get Started</button>
                     <br/><br/><br/>
-                    <button className="btn btn-primary" onClick={test}>Get Started</button>
+                    userName ===> {userName}
                     <br/><br/><br/>
-                    <button className="btn btn-primary" onClick={() => setUserName('')}>Get Reset</button>
+                    input : <input type="text" onChange={(e) => setTemp(e.target.value)}/>
                     <br/><br/><br/>
-                    {userName}
+                    <button className="btn btn-primary" onClick={test}>Get</button>
                 </div>
             </section>
 
