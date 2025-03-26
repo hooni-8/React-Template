@@ -23,7 +23,7 @@ export default function Login() {
 
             if (response.status === 200) {
                 if (response.data.data.code === '0000') {
-                    localStorage.setItem('authToken', response.data.data.token);
+                    localStorage.setItem('token', response.data.data.token);
                     window.location.href = "/";
                 } else {
                     alert("아이디와 비밀번호를 확인해주세요.");

@@ -5,7 +5,7 @@ import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import * as gateway from "@components/common/Gateway";
 
 export default function Header() {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
 
     const location = useLocation();
 
@@ -19,15 +19,17 @@ export default function Header() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await gateway.session();
+            if (token) {
+                const response = await gateway.session();
 
-            setUserName(response.userName);
+                setUserName(response.userName);
+            }
         }
         fetchData()
     }, [location.pathname]);
 
     const logout = () => {
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('token');
         window.location.reload();
     }
 

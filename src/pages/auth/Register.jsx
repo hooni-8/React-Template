@@ -1,47 +1,88 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import "@styles/pages/auth/Register.css"
+import * as gateway from "@components/common/Gateway";
 
 export default function Register() {
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        agreeTerms: false
-    });
+    const [userName, setUserName] = useState('');
+    const [userId, setUserId] = useState('');
+    const [userPassword, setUserPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [userEmail, setUserEmail] = useState('');
 
+    const [userIdCheck, setUserIdCheck] = useState(false);
+    const [passwordMatch, setPasswordMatch] = useState(false);
     const [passwordError, setPasswordError] = useState('');
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value
-        });
-
-        // 비밀번호 확인 검증
-        if (name === 'confirmPassword' || (name === 'password' && formData.confirmPassword)) {
-            if (name === 'password' && value !== formData.confirmPassword) {
-                setPasswordError('Passwords do not match');
-            } else if (name === 'confirmPassword' && value !== formData.password) {
+    useEffect(() => {
+        if (userPassword !== '' && confirmPassword !== '') {
+            if (userPassword !== confirmPassword) {
                 setPasswordError('Passwords do not match');
             } else {
                 setPasswordError('');
+                setPasswordMatch(true);
             }
         }
-    };
+    }, [userPassword, confirmPassword]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (formData.password !== formData.confirmPassword) {
-            setPasswordError('Passwords do not match');
+    useEffect(() => {
+        if (userIdCheck) {
+            setUserIdCheck(false);
+        }
+    },[userId]);
+
+    const duplicateCheck = async () => {
+        if (userId.trim() === '') {
+            alert("ID를 입력해주세요.");
             return;
         }
-        // 회원가입 로직 구현
-        console.log('Signup form submitted:', formData);
-    };
+
+        try {
+            const response = await gateway.post("/auth/existsUserId", {userId});
+
+            if (!response.data.data) {
+                setUserIdCheck(true);
+                alert("사용 가능한 ID 입니다.");
+            } else {
+                alert("사용중인 ID 입니다.");
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    const register = async () => {
+        if (!userIdCheck) {
+            alert("ID 중복 체크를 해주세요");
+            return;
+        }
+
+        if (!passwordMatch) {
+            alert("비밀번호를 확인해주세요.");
+            return;
+        }
+
+        try {
+            const payload = {
+                userId
+                , userPassword
+                , userEmail
+                , userName
+            }
+
+            const response = await gateway.post("/auth/register", payload);
+
+            if (response.data.data.code === '0000') {
+                alert("회원가입에 성공하셨습니다.");
+                window.location.href = "/";
+            } else {
+                alert("회원가입에 실패하였습니다.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("회원가입 중 오류가 발생했습니다.");
+        }
+    }
 
     return (
         <div className="page-container">
@@ -52,45 +93,18 @@ export default function Register() {
                         <p>Join us today and get started with your new account</p>
                     </div>
 
-                    <div className="signup-form" onSubmit={handleSubmit}>
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="firstName">First Name</label>
-                                <input
-                                    type="text"
-                                    id="firstName"
-                                    name="firstName"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                    placeholder="Enter your first name"
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="lastName">Last Name</label>
-                                <input
-                                    type="text"
-                                    id="lastName"
-                                    name="lastName"
-                                    value={formData.lastName}
-                                    onChange={handleChange}
-                                    placeholder="Enter your last name"
-                                    required
-                                />
-                            </div>
-                        </div>
-
+                    <div className="signup-form">
                         <div className="form-group">
-                            <label htmlFor="email">Email Address</label>
+                            <label htmlFor="email">ID</label>
                             <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="Enter your email"
+                                type="text"
+                                id="userId"
+                                name="userId"
+                                onChange={(e) => setUserId(e.target.value)}
+                                placeholder="Enter your ID"
                                 required
                             />
+                            <button onClick={duplicateCheck} disabled={userIdCheck}>중복확인</button>
                         </div>
 
                         <div className="form-group">
@@ -99,8 +113,7 @@ export default function Register() {
                                 type="password"
                                 id="password"
                                 name="password"
-                                value={formData.password}
-                                onChange={handleChange}
+                                onChange={(e) => setUserPassword(e.target.value)}
                                 placeholder="Create a password"
                                 required
                             />
@@ -113,8 +126,7 @@ export default function Register() {
                                 type="password"
                                 id="confirmPassword"
                                 name="confirmPassword"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 placeholder="Confirm your password"
                                 required
                                 className={passwordError ? 'input-error' : ''}
@@ -122,21 +134,47 @@ export default function Register() {
                             {passwordError && <small className="error-message">{passwordError}</small>}
                         </div>
 
+                        <div className="form-group">
+                            <label htmlFor="firstName">Name</label>
+                            <input
+                                type="text"
+                                id="userName"
+                                name="userName"
+                                onChange={(e) => setUserName(e.target.value)}
+                                placeholder="Enter your first name"
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="email">Email Address</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                onChange={(e) => setUserEmail(e.target.value)}
+                                placeholder="Enter your email"
+                                required
+                            />
+                        </div>
+
                         <div className="form-check">
                             <input
                                 type="checkbox"
                                 id="agreeTerms"
                                 name="agreeTerms"
-                                checked={formData.agreeTerms}
-                                onChange={handleChange}
+                                // checked={formData.agreeTerms}
+                                // onChange={handleChange}
                                 required
                             />
                             <label htmlFor="agreeTerms">
-                                I agree to the <a href="#" className="terms-link">Terms of Service</a> and <a href="#" className="terms-link">Privacy Policy</a>
+                                I agree to the <a href="#" className="terms-link">Terms of Service</a> and <a href="#"
+                                                                                                              className="terms-link">Privacy
+                                Policy</a>
                             </label>
                         </div>
 
-                        <button type="submit" className="btn btn-signup-submit">Create Account</button>
+                        <button className="btn btn-signup-submit" onClick={register}>Create Account</button>
                     </div>
 
                     <div className="signup-footer">

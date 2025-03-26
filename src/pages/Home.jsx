@@ -11,7 +11,7 @@ export default function Home() {
 
     const [temp, setTemp] = useState('');
 
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
 
     const test = async () => {
         try {
