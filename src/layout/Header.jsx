@@ -5,7 +5,7 @@ import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import * as gateway from "@components/common/Gateway";
 
 export default function Header() {
-    const token = localStorage.getItem('token');
+    const accessToken = localStorage.getItem('accessToken');
 
     const location = useLocation();
 
@@ -19,7 +19,7 @@ export default function Header() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (token) {
+            if (accessToken) {
                 const response = await gateway.session();
 
                 setUserName(response.userName);
@@ -28,8 +28,8 @@ export default function Header() {
         fetchData()
     }, [location.pathname]);
 
-    const logout = () => {
-        localStorage.removeItem('token');
+    const logout = async () => {
+        localStorage.removeItem('accessToken');
         window.location.reload();
     }
 
@@ -44,7 +44,7 @@ export default function Header() {
                     <li><NavLink to={"/contact"}>Contact</NavLink></li>
                 </ul>
                 <div className="auth-buttons">
-                    {token !== null ?
+                    {accessToken !== null ?
                         <>
                             {userName}
                             <button className="btn btn-signup" onClick={logout}>Log Out</button>

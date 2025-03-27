@@ -11,12 +11,12 @@ export default function Home() {
 
     const [temp, setTemp] = useState('');
 
-    const token = localStorage.getItem('token');
+    const accessToken = localStorage.getItem('accessToken');
 
     const test = async () => {
         try {
             const payload = {
-                token
+                accessToken
             };
 
             const response = await gateway.post("/auth/session", payload);
@@ -40,7 +40,7 @@ export default function Home() {
             const response = await gateway.post("/template/api/v1/test/user", payload);
 
             if (response.status === 200) {
-                console.log(response.data.data);
+                console.log(response.data);
                 setUserName(response.data);
             }
 
@@ -55,13 +55,13 @@ export default function Home() {
                 <div className="hero-content">
                     <h1>Welcome to MyApp</h1>
                     <p>A simple, clean and modern React template for your next project</p>
-                    <button className="btn btn-primary">Get Started</button>
+                    <button className="btn btn-primary" onClick={test}>Get Started</button>
                     <br/><br/><br/>
                     userName ===> {userName}
                     <br/><br/><br/>
                     input : <input type="text" onChange={(e) => setTemp(e.target.value)}/>
                     <br/><br/><br/>
-                    <button className="btn btn-primary" onClick={test}>Get</button>
+                    <button className="btn btn-primary" onClick={test2}>Get</button>
                 </div>
             </section>
 
