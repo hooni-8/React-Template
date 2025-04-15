@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import * as gateway from "@components/common/Gateway";
 
 import "@styles/pages/auth/login.css"
@@ -20,7 +20,7 @@ export default function Login() {
 
         try {
             const response = await gateway.post("/auth/login", payload);
-            console.log(response.status);
+
             if (response.status === 200) {
                 if (response.data.code === '0000') {
                     localStorage.setItem('accessToken', response.data.accessToken);
@@ -32,6 +32,12 @@ export default function Login() {
             }
         } catch (e) {
             console.error(e);
+        }
+    }
+
+    const handleEnter = (e) => {
+        if (e.key === "Enter") {
+            login();
         }
     }
 
@@ -64,6 +70,7 @@ export default function Login() {
                                 id="password"
                                 name="password"
                                 onChange={(e) => setPassword(e.target.value)}
+                                onKeyDown={handleEnter}
                                 placeholder="Enter your password"
                                 required
                             />

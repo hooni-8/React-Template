@@ -72,7 +72,7 @@ export default function Register() {
 
             const response = await gateway.post("/auth/register", payload);
 
-            if (response.data.data.code === '0000') {
+            if (response.data.code === '0000') {
                 alert("회원가입에 성공하셨습니다.");
                 window.location.href = "/";
             } else {

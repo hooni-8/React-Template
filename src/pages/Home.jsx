@@ -22,7 +22,6 @@ export default function Home() {
             const response = await gateway.post("/auth/session", payload);
 
             if (response.status === 200) {
-                console.log(response.data.data);
                 setUserName(response.data.data);
             }
 
@@ -40,7 +39,6 @@ export default function Home() {
             const response = await gateway.post("/template/api/v1/test/user", payload);
 
             if (response.status === 200) {
-                console.log(response.data);
                 setUserName(response.data);
             }
 

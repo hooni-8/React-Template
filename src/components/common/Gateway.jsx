@@ -1,5 +1,5 @@
 import axios from "axios";
-import axiosInstance from "./GatewayInstance";
+import api from "./GatewayInstance";
 
 const baseUrl = process.env.REACT_APP_API_GATEWAY;
 
@@ -8,7 +8,7 @@ const accessToken = localStorage.getItem('accessToken');
 export const get = async (path, opts) => {
     let result = {};
 
-    await axiosInstance.get(baseUrl + path, {
+    await api.get(baseUrl + path, {
         params: opts,
     }).then((response) => {
         if (response.status === 200) {
@@ -17,7 +17,7 @@ export const get = async (path, opts) => {
         }
     }).catch((error) => {
         result = error.response;
-        console.log(error);
+        console.error(error);
     });
     return result;
 }
@@ -42,7 +42,7 @@ export const get = async (path, opts) => {
 export const post = async (path, payload) => {
     let result = {};
 
-    await axiosInstance.post(baseUrl + path, payload, {})
+    await api.post(baseUrl + path, payload, {})
         .then((response) => {
             if (response.status === 200) {
                 result = response;
@@ -51,7 +51,7 @@ export const post = async (path, payload) => {
         })
         .catch((error) => {
             result = error.response;
-            console.log(error);
+            console.error(error);
         })
     return result;
 }
@@ -65,7 +65,7 @@ export const session = async () => {
             result = {userName: data}
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
         })
     return result;
 }
