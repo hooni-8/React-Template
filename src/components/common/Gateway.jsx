@@ -57,12 +57,13 @@ export const post = async (path, payload) => {
 }
 
 export const session = async () => {
-    let result = {userName: ''};
+    let result = { isLogin: false, userName: '', userCode: '', role: '' };
 
-    await axios.post(baseUrl + "/auth/session", {accessToken})
+    await api.post(baseUrl + "/auth/session", { accessToken })
         .then((response) => {
             const data = response.data;
-            result = {userName: data}
+
+            result = {isLogin: data.status, userName: data.name, userCode: data.userCode, role: data.role};
         })
         .catch((error) => {
             console.error(error)

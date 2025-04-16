@@ -32,10 +32,7 @@ api.interceptors.response.use(
             try {
                 // 리프레시 토큰으로 새 액세스 토큰 요청
                 const refreshToken = localStorage.getItem('refreshToken');
-                const response = await gateway.post('/auth/refresh', {
-                    userId: "dltkdgns0726",
-                    refreshToken
-                });
+                const response = await gateway.post('/auth/refresh', { refreshToken });
 
                 const accessToken = response.data.accessToken;
                 // 신규 토큰 저장
@@ -65,8 +62,5 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 )
-
-
-
 
 export default api;
