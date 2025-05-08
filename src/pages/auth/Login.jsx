@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import * as gateway from "@components/common/Gateway";
 
-import "@styles/pages/auth/login.css"
+import "@styles/pages/login.css"
+import {Link} from "react-router-dom";
 
 export default function Login() {
 
@@ -25,7 +26,7 @@ export default function Login() {
                 if (response.data.code === '0000') {
                     localStorage.setItem('accessToken', response.data.accessToken);
                     localStorage.setItem('refreshToken', response.data.refreshToken);
-                    window.location.href = "/";
+                    window.location.href = "/home";
                 } else {
                     alert("아이디와 비밀번호를 확인해주세요.");
                 }
@@ -96,7 +97,7 @@ export default function Login() {
                     </div>
 
                     <div className="login-footer">
-                        <p>Don't have an account? <a href="/register">Sign Up</a></p>
+                        <p>Don't have an account? <Link to="/register">Sign Up</Link></p>
                     </div>
                 </div>
             </main>

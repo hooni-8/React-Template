@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
 
-import "@styles/pages/auth/Register.css"
+import "@styles/pages/Register.css"
 import * as gateway from "@components/common/Gateway";
+import {Link} from "react-router-dom";
 
 export default function Register() {
     const [userName, setUserName] = useState('');
@@ -163,8 +164,6 @@ export default function Register() {
                                 type="checkbox"
                                 id="agreeTerms"
                                 name="agreeTerms"
-                                // checked={formData.agreeTerms}
-                                // onChange={handleChange}
                                 required
                             />
                             <label htmlFor="agreeTerms">
@@ -178,7 +177,7 @@ export default function Register() {
                     </div>
 
                     <div className="signup-footer">
-                        <p>Already have an account? <a href="/login">Sign In</a></p>
+                        <p>Already have an account? <Link to="/">Sign In</Link></p>
                     </div>
                 </div>
             </main>
